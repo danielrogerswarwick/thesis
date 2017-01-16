@@ -1,0 +1,29 @@
+e:=1;
+G:=SL(4,3^e);
+dG:=sub<G|[Transpose(G.i^-1) : i in [1..#Generators(G)]]>; //dG is the image of G under duality aut of G
+
+// Construct the 16-dimensional irreducible module for G and dG.
+
+V:=GModule(G);
+dV:=GModule(dG);
+
+T:=TensorPower(V,3);
+dT:=TensorPower(dV,3);
+
+W:=sub<T|T.2+T.5+T.17>;
+dW:=sub<dT | dT.2 + dT.5 + dT.17>; //dW is the 16-dimensional module acted on by the duality automorphism of G
+
+assert Dimension(W) eq 16; assert Dimension(dW) eq 16;
+
+
+H:=ActionGroup(W);
+Wd:=GModule(H,[Transpose(H.i)^-1: i in [1..#Generators(H)]]);
+// Wd is the 16-dimensional module acted on by the duality automorphism of SL(16,3^e)
+
+hh:=GHom(Wd,dW);
+assert Dimension(hh) eq 1;
+// Hence these modules are isomorphic
+
+print Determinant(hh.1); // 1
+// Hence duality on SL(16,3^e) induces duality on G
+

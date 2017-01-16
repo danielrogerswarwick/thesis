@@ -1,0 +1,31 @@
+S:=sub<Sym(18)|Alt(18), Sym(18)!(1,2)>;
+
+G2:=ActionGroup(Constituents(PermutationModule(S,GF(3)))[2]);
+assert Degree(G2.1) eq 16;
+ChiefFactors(G2);
+/*
+    G
+    |  Cyclic(2)
+    *
+    |  Alternating(18)
+    1
+*/
+
+G:=sub<Generic(G2)|G2.1,G2.2>;
+
+ChiefFactors(G);
+/*
+    G
+    |  Alternating(18)
+    1
+*/
+
+isit,form,type := SymmetricBilinearForm(G2);
+assert isit;
+type; // orthogonalminus
+
+// Hence G.2 preserves an orthogonal minus type form
+
+[Determinant(G2.i) : i in [1..3]]; // [1,1,2]
+
+// Hence the 2 automorphism of G is induced by a matrix with determinant -1

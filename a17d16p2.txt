@@ -1,0 +1,19 @@
+G := QuasisimpleMatrixGroup("A17",16,2:Automorphisms:=true);
+
+LMGChiefFactors(G);
+/*
+    G
+    |  Cyclic(2)
+    *
+    |  Alternating(17)
+    1
+*/
+
+isit,form,type:=SymmetricBilinearForm(G);
+assert isit;
+type; //orthogonalplus
+
+[SpinorNorm(G.i,form) : i in [1..3]]; //[0,0,1]
+
+// Hence the 2 automorphism of G lies in GO but not Omega, and hence is induced by gamma
+

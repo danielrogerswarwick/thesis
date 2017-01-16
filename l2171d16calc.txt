@@ -1,0 +1,105 @@
+
+G2:=QuasisimpleMatrixGroup("L217",16,0:RepNo:=1,Automorphisms:=true);
+assert #G2 eq 4896;
+
+A:=G2.1;
+B:=G2.2;
+C:=G2.3;
+
+ChiefFactors(G2);
+/*
+    G
+    |  Cyclic(2)
+    *
+    |  A(1, 17)                   = L(2, 17)
+    1
+*/
+
+G:=sub<G2|A,B>;
+ChiefFactors(G);
+
+/*
+    G
+    |  A(1, 17)                   = L(2, 17)
+    1
+*/
+
+
+// Construct the form preserved by G
+V := GModule(G);
+hh := GHom(V,Dual(V));
+assert Dimension(hh) eq 1;
+
+form:=hh.1;
+
+for i in [1..3] do;
+	assert G2.i*form*Transpose(G2.i) eq form;
+end for;
+
+// Hence G.2 preserves this form
+
+
+// Check bad primes:
+LCM({ Denominator(x) : x in Eltseq(G2.1) }); // 1
+LCM({ Denominator(x) : x in Eltseq(G2.2) }); // 1
+LCM({ Denominator(x) : x in Eltseq(G2.3) }); // 1
+LCM({ Denominator(x) : x in Eltseq(form) }); // 6
+
+// Hence we need separate computations for p=2 and p=3
+
+
+// Determine the shape of the form:
+dd:=Determinant(form);
+IsSquare(dd*17); // true
+// Hence the shape of the form depends on p mod 17
+
+[Determinant(G2.i) : i in [1..3]];
+// [1, 1, -1]
+// Hence G.2\G is in GO\SO
+
+
+
+// p=3
+G2p3:=QuasisimpleMatrixGroup("L217",16,3:RepNo:=1,Automorphisms:=true);
+
+LMGChiefFactors(G2p3);
+/*
+    G
+    |  Cyclic(2)
+    *
+    |  A(1, 17)                   = L(2, 17)
+    1
+*/
+
+isit,form,type:=SymmetricBilinearForm(G2p3);
+assert isit;
+type;
+// orthogonalminus
+
+[G2p3.i*form*Transpose(G2p3.i) eq form : i in [1..3]];
+// [ true, true, true ]
+[Determinant(G2p3.i) : i in [1..3]];
+// [ 1, 1, 2 ]
+
+
+// p=2
+G2p2:=QuasisimpleMatrixGroup("L217",16,2:RepNo:=1,Automorphisms:=true);
+
+LMGChiefFactors(G2p2);
+/*
+    G
+    |  Cyclic(2)
+    *
+    |  A(1, 17)                   = L(2, 17)
+    1
+*/
+
+isit,form,type:=SymmetricBilinearForm(G2p2);
+assert isit;
+type;
+// orthogonalplus
+
+[SpinorNorm(G2p2.i,form) : i in [1..3]];
+// [0,0,1]
+// Hence G.2 is again induced by gamma
+

@@ -1,0 +1,108 @@
+// Import 4b.L_3(4) from the ATLAS. 
+
+/*
+www-ATLAS of Group Representations.
+4b.L3(4) represented as 16 x 16 matrices over GF(9).
+*/
+
+F<w>:=GF(9);
+
+x:=CambridgeMatrix(1,F,16,[
+"0100000000000000",
+"1000000000000000",
+"0001000000000000",
+"0010000000000000",
+"0000001000000000",
+"0000000100000000",
+"0000100000000000",
+"0000010000000000",
+"0000000000010000",
+"0000000000000100",
+"0000000000000001",
+"0000000010000000",
+"6357834613021600",
+"0000000001000000",
+"7142203627811428",
+"0000000000100000"]);
+
+y:=CambridgeMatrix(1,F,16,[
+"1200000000000000",
+"0010000000000000",
+"0000100000000000",
+"0000010000000000",
+"0220200000000000",
+"0000000010000000",
+"0000000001000000",
+"0000000000100000",
+"0000000000001000",
+"0000000000000010",
+"8121336277064716",
+"4438381227772276",
+"0001000000000000",
+"1873148470374525",
+"0001000000002001",
+"0001021000000000"]);
+
+G<x,y>:=MatrixGroup<16,F|x,y>;
+G:=G^(TransformForm(G)*TransformForm(Identity(G),"unitary")^-1);
+
+M:=GModule(G);
+K<w>:=BaseRing(M);
+
+// Check standard genereators
+A:=ActionGenerator(M,1); B:=ActionGenerator(M,2);
+IsScalar(A^4), Order(B), Order(A*B), Order(A*B^2);
+     //true, 4, 7, 5, so A and B are standard gens
+
+// Construct images of all 3 outer automorphisms (each sends A to itself)
+// Simultaneously check that they are standard generators
+B1 := B^2*A*B^2*A*B*A*B*A*B^-1*A*B^2*A*B^2*(A*B^2*A*B)^21;
+IsScalar(A^4), Order(B1), Order(A*B1), Order(A*B1^2); //true, 4, 7, 5
+B2 := (B^-1*A)^3*(B*A)^3*B;
+IsScalar(A^4), Order(B2), Order(A*B2), Order(A*B2^2); //true, 4, 7, 5
+B3 := B^-1;
+IsScalar(A^4), Order(B3), Order(A*B3), Order(A*B3^2); //true, 4, 7, 5
+// So all are standard generators.
+
+// Construct the modules for each outer automorphism
+AM1:=GModule(G,[A,B1]);
+AM2:=GModule(G,[A,B2]);
+AM3:=GModule(G,[A,B3]);
+
+ex:=GHom(M,AM2);
+assert Dimension(ex) eq 1; 
+C:=ex.1; // C extends G to G.2_2
+S:=sub<Generic(G)|A,B,C>;
+ChiefFactors(S);
+/*
+    G
+    |  Cyclic(2)
+    *
+    |  A(2, 4)                    = L(3, 4)
+    *
+    |  Cyclic(2)
+    *
+    |  Cyclic(2)
+    1
+*/
+
+
+
+// Module for gamma
+Mgamma := GModule(G, [Transpose(A^-1),Transpose(B^-1)] ); //dual of M
+
+dh1 := GHom(AM1,Mgamma); 
+assert Dimension(dh1) eq 1; // Confirms that AM and DM are isomorphic
+L:=dh1.1;
+isit,kappa:=IsSquare(Determinant(L));
+assert isit;
+
+Lbar:=MatrixAlgebra(GF(9),16)![l^3 : l in Eltseq(L)];
+assert IsDiagonal(L*Transpose(Lbar));
+lambda:=(L*Transpose(Lbar))[1][1];
+
+lambda^-8 * kappa^4;
+// 1, so class is stabilised by a conjugate of gamma
+
+
+

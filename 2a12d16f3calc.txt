@@ -1,0 +1,81 @@
+// Import G=2.A12 in characteristic 3 from the online ATLAS
+// http://brauer.maths.qmul.ac.uk/Atlas/alt/A12/
+
+/*
+www-ATLAS of Group Representations.
+2.A12 represented as 16 x 16 matrices over GF(3).
+*/
+
+F:=GF(3);
+
+x:=CambridgeMatrix(1,F,16,[
+"0100000000000000",
+"2200000000000000",
+"0000100000000000",
+"0000001000000000",
+"0020200000000000",
+"0000000010000000",
+"0002002000000000",
+"0000000000010000",
+"0000020020000000",
+"2002021112110100",
+"0000000000000001",
+"0000000200020000",
+"1012202202201212",
+"0101012122000002",
+"0001002100220011",
+"0000000000200002"]);
+
+y:=CambridgeMatrix(1,F,16,[
+"0010000000000000",
+"0001000000000000",
+"0000010000000000",
+"0222000000000000",
+"0000000100000000",
+"0000000001000000",
+"0000000000100000",
+"0000000000001000",
+"0000000000000100",
+"0000000000000010",
+"1221202121012101",
+"1020002112102112",
+"2212120210121210",
+"0011011012000201",
+"2021121101101100",
+"2200001010111220"]);
+
+G<x,y>:=MatrixGroup<16,F|x,y>;
+
+M:=GModule(G);
+
+
+// Check standard generators
+A:=ActionGenerator(M,1); B:=ActionGenerator(M,2);
+Order(A), Order(B), IsScalar((A*B)^10), IsScalar((A*B^2)^35); 
+  //3,11,true,true - so these are standard generators.
+
+
+DM := GModule(G, [Transpose(A^-1),Transpose(B^-1)] ); //dual of M
+
+// Construct images of the outer automorphism
+imA:=A^-1;
+imB:= B*A^-1*(A*B)^10;
+// Automorphism of A12 sends A to A^-1, B to B*A^-1.
+// This can be seen by taking A=(1,2,3) and B=(2,3,4,5,6,7,8,9,10,11,12)
+// and considering the outer automorphism to be conjugation by (1,2).
+// This gives imA as required in 2.A12, but imB has order 22.
+// imB needs to be multiplied by a scalar, and (A*B)^10 is a nontrivial scalar.
+
+// Check these images give standard generators
+Order(imA), Order(imB), IsScalar((imA*imB)^10), IsScalar((imA*imB^2)^35); 
+// 3,11,true, true
+
+AM := GModule(G, [imA,imB] ); //2 aut
+
+
+dh := GHom(AM,DM); 
+assert Dimension(dh) eq 1; // Confirms that AM and DM are isomorphic
+dd:=Determinant(dh.1);
+IsSquare(dd); // true;
+// Hence the class stabiliser is gamma
+

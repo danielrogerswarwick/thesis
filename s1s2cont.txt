@@ -1,0 +1,115 @@
+// L_2(16).4 < A_17
+
+G:=PGammaL(2,16);
+A:=Alt(17);
+
+p1:=PermutationMatrix(GF(2),A.1);
+p2:=PermutationMatrix(GF(2),A.2);
+
+H1:=sub<GL(17,2) | p1,p2>;
+H:=ActionGroup(Constituents(GModule(H1))[2]);
+assert Dimension(GModule(H)) eq 16 and IsIrreducible(GModule(H));
+
+isit,rho:=IsIsomorphic(A,H);
+assert isit; // Hence H is the S1 candidate representation of A_17
+
+K:=sub<GL(16,2) | [rho(G.i) : i in [1..#Generators(G)]]>;
+ChiefFactors(K);
+/*
+    G
+    |  Cyclic(2)
+    *
+    |  Cyclic(2)
+    *
+    |  A(1, 16)                   = L(2, 16)
+    1
+*/
+assert IsIrreducible(GModule(K)) and Dimension(GModule(K)) eq 16;
+// Hence K is (the action group of) a 16-dimensional irreducible PGammaL(2,16)-module
+
+
+Ks:=sub<GL(16,2) | [rho(G.i) : i in [1..2]]>;
+ChiefFactors(Ks);
+/*
+    G
+    |  A(1, 16)               = L(2, 16)
+    1
+*/
+
+IsIrreducible(GModule(Ks));
+//true 
+// Hence this is the S2 candidate representation of PGammaL(2,16), embedding in the S1 representation of A17
+
+
+
+
+// A_12 < SpinMinus(10,2);
+
+S:=SpinMinus(10,2);
+V:=GModule(S);
+V2:=Constituents(V)[2]; assert Dimension(V2) eq 16;
+Omega:=ActionGroup(V2);
+
+SS:=Subgroups(Omega : OrderEqual := #Alt(12));
+assert #SS eq 1;
+A:=SS[1]`subgroup;
+LMGChiefFactors(A);
+/*
+    G
+    |  Alternating(12)
+    1
+*/
+
+IsIrreducible(GModule(A));
+// true 
+// Hence we have a containment of A in the spin representation.
+
+
+
+
+// 4_2.L_3(4).2_2 < SU_4(3).4
+
+
+G1:=GU(4,3);
+V:=GModule(G1);
+T:=TensorPower(V,3);
+C:=Constituents(T);C;
+
+/*
+[
+    GModule of dimension 4 over GF(3^2),
+    GModule of dimension 4 over GF(3^2),
+    GModule of dimension 16 over GF(3^2)
+]
+[ 1, 3, 1, 3, 1, 2, 3 ]
+*/
+
+G:=ActionGroup(C[3]);
+assert {Determinant(g) : g in Generators(G)} eq {1};
+
+SS:=Subgroups(G: OrderEqual:=8*#PSL(3,4));
+assert #SS eq 1;
+
+A:=SS[1]`subgroup;
+LMGChiefFactors(A);
+/*
+    G
+    |  Cyclic(2)
+    *
+    |  A(2, 4)                = L(3, 4)
+    *
+    |  Cyclic(2)
+    *
+    |  Cyclic(2)
+    1
+*/
+
+IsIrreducible(GModule(A));
+// true 
+// Hence we have a containment of A in the spin representation.
+
+
+
+
+
+

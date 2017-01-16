@@ -1,0 +1,96 @@
+// Import G=A_10 in characteristic 2 from ATLAS
+// http://brauer.maths.qmul.ac.uk/Atlas/v3/alt/A10/
+/*
+www-ATLAS of Group Representations.
+A10 represented as 16 x 16 matrices over GF(2).
+*/
+F:=GF(2);
+
+a:=CambridgeMatrix(1,F,16,[
+"0100000000000000",
+"1100000000000000",
+"0001000000000000",
+"0011000000000000",
+"0000010000000000",
+"0000110000000000",
+"0000000100000000",
+"0000001100000000",
+"0000000001000000",
+"0000000011000000",
+"0000000000010000",
+"0000000000110000",
+"0000000000000100",
+"0000000000001100",
+"0000000000000001",
+"0000000000000011"]);
+
+b:=CambridgeMatrix(1,F,16,[
+"0010000000000000",
+"0000100000000000",
+"1010000000000000",
+"0000001000000000",
+"0000000001110000",
+"0000000000010000",
+"0000000000001001",
+"0000000000000010",
+"0000000001000000",
+"0000000010010000",
+"0101000100000000",
+"1010000100000000",
+"0011110000001001",
+"0000010000000010",
+"1010010011000110",
+"0011101000101000"]);
+
+G<a,b>:=MatrixGroup<16,F|a,b>;
+
+ChiefFactors(G);
+/*
+    G
+    |  Alternating(10)
+    1
+*/
+M := GModule(G);
+
+Order(a), Order(b), Order(a*b), Order(a*b*b);
+// 3, 9, 8, 12, so standard generators.
+
+
+// Obtain mapping for the outer automorphism of A_10 from the old online Atlas:
+// http://brauer.maths.qmul.ac.uk/Atlas/alt/A10/
+
+a2:=a^-1;
+b2:=b*a^-1;
+
+Order(a2), Order(b2), IsScalar((a2*b2)^8), IsScalar((a2*b2^2)^12);
+// 3, 9, true, true, so standard generators.
+
+
+aM:=GModule(G,[a2,b2]); // 2 automorphism
+h:=GHom(M,aM);
+c:=MatrixAlgebra(F,16)!(h.1);
+
+G2:=sub<Generic(G)|a,b,c>;
+
+ChiefFactors(G2);
+/*
+    G
+    |  Cyclic(2)
+    *
+    |  Alternating(10)
+    1
+*/
+
+// Group is Sym(10);
+
+isit,form,type:=SymmetricBilinearForm(G2);
+assert isit eq true;
+type; // orthogonalplus
+// Hence G.2 < SO+;
+
+[Determinant(G2.i) : i in [1..3]];
+// [1,1,1]
+
+[SpinorNorm(G2.i,form) : i in [1..3]]; 
+// [0,0,0] 
+// Hence G.2 < Omega+

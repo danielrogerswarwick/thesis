@@ -1,0 +1,172 @@
+//G=2.L2(31) in dimension 16, characteristic not 2
+
+G := QuasisimpleMatrixGroup("2L231",16,0);
+ChiefFactors(G);
+/*
+    G
+    |  A(1, 31)			= L(2,31)
+    *
+    |  Cyclic(2)
+    1
+*/
+
+M:=GModule(G);
+K<w>:=BaseRing(M);
+MinimalPolynomial(w); // $.1^2 - $.1 + 8
+A:=ActionGenerator(M,1); B:=ActionGenerator(M,2);
+IsScalar(A^2), Order(B), Order(A*B); 
+  //true, 3, 31 - so these are standard generators.
+
+//check no bad primes in the matrices
+LCM({ Denominator(x) : x in Eltseq(A) }); //965
+LCM({ Denominator(x) : x in Eltseq(B) }); //1930 
+// Will need to deal with 193 and 5 separately
+
+DM := GModule(G, [Transpose(A^-1),Transpose(B^-1)] ); //dual of M
+
+// Construct images of the outer automorphism
+imA:=A;
+imB:= B * A * B * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2
+* A * B^2 * A * B^2 * A * B * A^-2 * B^-2 * A^-1 * B^-1 * A^-3 * B * A * B * A *
+B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A *
+B^2 * A * B * A^-2 * B^-2 * A^-1 * B^-1 * A^-3 * B * A * B * A * B^2 * A * B^2 *
+A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B *
+A^-2 * B^-2 * A^-1 * B^-1 * A^-4 * B * A * B * A^-1 * B^2 * A;
+
+// Check these images give standard generators
+IsScalar(imA^2); Order(imB); Order(imA * imB);
+// true, 3, 31
+
+AM := GModule(G, [imA,imB] ); //2 aut
+
+
+dh := GHom(AM,DM); 
+assert Dimension(dh) eq 1; // Confirms that AM and DM are isomorphic
+dd:=Determinant(dh.1);
+IsSquare(dd/2); // true;
+// Hence the class stabiliser in the linear case depends on whether 2 is a square mod p.
+
+// Find the form preserved in the unitary case
+
+Roots(PolynomialRing(K)!MinimalPolynomial(w)); // Gives image of the conjugation map
+/*
+[
+    <-w + 1, 1>,
+    <w, 1>
+]
+*/
+
+conj:=hom<K->K | -w+1>;
+star := function(m)
+  return Transpose(MatrixAlgebra(K,16)![ conj(e): e in Eltseq(m) ]);
+end function;
+Aa := star(A); Ba := star(B);
+DMS := GModule(G,[Aa^-1, Ba^-1]);
+hh:=GHom(M,DMS);
+form:=hh.1;
+
+//check no bad primes in the matrix hh.1 of the form
+LCM({ Denominator(x) : x in Eltseq(form) }); //31
+LCM({ Denominator(x) : x in Eltseq(form^-1) }); //3860
+// This gives no new bad primes.
+
+
+
+
+
+
+//Separate calculations for p=5 and p=193
+// Characteristic 5;
+p:=5;
+// If this follows the pattern suggested above, we expect G to not preserve a unitary form,
+// and for the class stabiliser to be gamma delta
+
+G := QuasisimpleMatrixGroup("2L231",16,p);
+
+ChiefFactors(G);
+/*
+    G
+    |  A(1, 31)			= L(2,31)
+    *
+    |  Cyclic(2)
+    1
+*/
+M:=GModule(G);
+A:=ActionGenerator(M,1); B:=ActionGenerator(M,2);
+IsScalar(A^2), Order(B), Order(A*B); 
+  //true, 3, 31 - so these are standard generators.
+
+isit:=UnitaryForm(G);
+assert isit eq false;
+
+
+DM := GModule(G, [Transpose(A^-1),Transpose(B^-1)] ); //dual of M
+
+// Construct images of the outer automorphism
+imA:=A;
+imB:= B * A * B * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2
+* A * B^2 * A * B^2 * A * B * A^-2 * B^-2 * A^-1 * B^-1 * A^-3 * B * A * B * A *
+B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A *
+B^2 * A * B * A^-2 * B^-2 * A^-1 * B^-1 * A^-3 * B * A * B * A * B^2 * A * B^2 *
+A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B *
+A^-2 * B^-2 * A^-1 * B^-1 * A^-4 * B * A * B * A^-1 * B^2 * A;
+
+// Check these images give standard generators
+IsScalar(imA^2); Order(imB); Order(imA * imB);
+// true, 3, 31
+
+AM := GModule(G, [imA,imB] ); //2 aut
+
+
+dh := GHom(AM,DM); 
+assert Dimension(dh) eq 1; // Confirms that AM and DM are isomorphic
+dd:=Determinant(dh.1);
+IsSquare(dd); // false, so class stabiliser is gamma delta
+
+
+// Characteristic 193;
+p:=193;
+// If this follows the pattern suggested above, we expect G to not preserve a unitary form,
+// and for the class stabiliser to be gamma
+
+G := QuasisimpleMatrixGroup("2L231",16,p);
+
+ChiefFactors(G);
+/*
+    G
+    |  A(1, 31)			= L(2,31)
+    *
+    |  Cyclic(2)
+    1
+*/
+M:=GModule(G);
+A:=ActionGenerator(M,1); B:=ActionGenerator(M,2);
+IsScalar(A^2), Order(B), Order(A*B); 
+  //true, 3, 31 - so these are standard generators.
+
+isit:=UnitaryForm(G);
+assert isit eq false;
+
+
+DM := GModule(G, [Transpose(A^-1),Transpose(B^-1)] ); //dual of M
+
+// Construct images of the outer automorphism
+imA:=A;
+imB:= B * A * B * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2
+* A * B^2 * A * B^2 * A * B * A^-2 * B^-2 * A^-1 * B^-1 * A^-3 * B * A * B * A *
+B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A *
+B^2 * A * B * A^-2 * B^-2 * A^-1 * B^-1 * A^-3 * B * A * B * A * B^2 * A * B^2 *
+A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B^2 * A * B *
+A^-2 * B^-2 * A^-1 * B^-1 * A^-4 * B * A * B * A^-1 * B^2 * A;
+
+// Check these images give standard generators
+IsScalar(imA^2); Order(imB); Order(imA * imB);
+// true, 3, 31
+
+AM := GModule(G, [imA,imB] ); //2 aut
+
+
+dh := GHom(AM,DM); 
+assert Dimension(dh) eq 1; // Confirms that AM and DM are isomorphic
+dd:=Determinant(dh.1);
+IsSquare(dd); // true, so class stabiliser is gamma

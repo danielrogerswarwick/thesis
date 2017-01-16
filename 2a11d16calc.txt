@@ -1,0 +1,71 @@
+// G=2.A11 in characteristic not 2 or 11
+G := QuasisimpleMatrixGroup("2A11",16,0);
+_,Gis:=IsomorphicCopy(G);
+ChiefFactors(Gis);
+/*
+  G
+  |  Alternating(11)
+  *
+  |  Cyclic(2)
+  1
+*/
+
+M:=GModule(G);
+K<w>:=BaseRing(M);
+MinimalPolynomial(w); // $.1^2 + $.1 + 3
+
+A:=ActionGenerator(M,1); B:=ActionGenerator(M,2);
+Order(A),Order(B),IsScalar((A*B)^11); 
+  //3,9,true - so these are standard generators from the online Atlas.
+
+//check no bad primes in the matrices
+LCM({ Denominator(x) : x in Eltseq(A) }); //1
+LCM({ Denominator(x) : x in Eltseq(B) }); //1 
+// No bad primes
+
+DM := GModule(G, [Transpose(A^-1),Transpose(B^-1)] ); //dual of M
+
+// Construct images of the outer automorphism
+// This is obtained from the outer automorphism of A11
+// In A11, A=(1,2,3) and B = (3,4,5,6,7,8,9,10,11)
+// The outer automorphism is induced by conjugation by the element (1,2)
+imA:=A^-1;
+imB:=B;
+
+
+// Check these images give standard generators
+Order(imA),Order(imB),Order(imA*imB);
+// 3,9,11
+
+AM := GModule(G, [imA,imB] ); //2 aut
+
+
+dh := GHom(DM,AM); 
+assert Dimension(dh) eq 1; // Confirms that AM and DM are isomorphic
+dd:=Determinant(dh.1);
+IsSquare(dd); //true;
+
+// Find the form preserved in the unitary case
+
+Roots(PolynomialRing(K)!MinimalPolynomial(w)); // Gives image of the conjugation map
+/*
+[
+    <-w - 1, 1>,
+    <w, 1>
+]
+*/
+
+conj:=hom<K->K | -w-1>;
+star := function(m)
+  return Transpose(MatrixAlgebra(K,16)![ conj(e): e in Eltseq(m) ]);
+end function;
+Aa := star(A); Ba := star(B);
+DMS := GModule(G,[Aa^-1, Ba^-1]);
+hh:=GHom(M,DMS);
+form:=hh.1;
+
+//check no bad primes in the matrix hh.1 of the form
+LCM({ Denominator(x) : x in Eltseq(form) }); //25
+LCM({ Denominator(x) : x in Eltseq(form^-1) }); //1
+// Thus no bad primes (p=5 is linear)
+

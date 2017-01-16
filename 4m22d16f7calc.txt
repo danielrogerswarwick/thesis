@@ -1,0 +1,97 @@
+//4.M22
+// Import 4.M22 in characteristic 7 from the ATLAS
+
+F<w>:=GF(49);
+
+x:=CambridgeMatrix(3,F,16,\[
+25,19,42,34,23,15,25,12,19,32,1,39,41,35,42,18,
+43,42,7,19,6,18,29,37,21,24,30,10,8,38,2,6,
+33,20,47,32,44,39,47,9,13,3,33,29,22,36,32,9,
+5,27,13,41,19,25,11,8,32,43,10,20,0,5,32,27,
+1,14,29,26,20,21,3,39,15,39,24,27,15,15,33,2,
+12,26,19,6,5,42,0,47,35,37,23,26,13,25,25,21,
+0,0,0,0,0,0,14,23,39,23,39,36,0,0,31,35,
+0,0,0,0,0,0,42,21,40,1,9,37,0,0,40,40,
+0,0,0,0,0,0,36,19,37,16,34,41,0,0,32,19,
+0,0,0,0,0,0,30,30,29,34,5,48,0,0,20,14,
+0,0,0,0,0,0,28,44,3,8,29,43,0,0,15,7,
+0,0,0,0,0,0,29,39,45,3,45,26,0,0,45,34,
+37,31,39,17,41,44,5,23,40,4,3,19,5,22,36,34,
+4,32,14,12,18,23,26,35,3,46,42,39,9,2,17,26,
+0,0,0,0,0,0,27,3,27,38,2,10,0,0,2,24,
+0,0,0,0,0,0,11,5,1,41,37,13,0,0,11,5]);
+
+y:=CambridgeMatrix(3,F,16,\[
+7,17,21,14,41,28,12,33,35,16,35,17,18,47,31,38,
+15,30,5,28,47,26,10,2,32,47,47,42,12,1,7,7,
+42,39,18,2,48,23,29,20,12,43,18,14,37,31,17,21,
+39,43,5,9,20,30,28,11,48,27,16,6,19,13,19,9,
+32,4,21,40,17,40,39,15,13,44,10,33,15,45,16,27,
+21,23,35,8,47,7,46,6,16,47,41,21,14,19,37,45,
+33,42,13,28,37,38,30,15,9,15,0,8,6,40,26,8,
+34,38,10,10,43,25,21,39,4,12,18,15,34,32,26,39,
+38,21,1,22,29,20,23,16,32,45,27,6,43,7,7,22,
+36,20,47,1,9,29,29,25,43,24,38,47,42,14,15,1,
+43,41,16,18,18,41,31,3,6,14,2,37,33,41,2,4,
+35,42,27,1,29,17,32,9,13,10,33,3,27,37,7,26,
+10,44,48,33,9,25,45,33,34,26,2,17,16,12,0,8,
+18,37,31,19,34,44,22,20,6,15,19,42,14,7,38,2,
+18,28,48,41,7,37,27,34,19,5,30,8,10,20,25,1,
+26,31,2,26,41,6,23,16,15,16,17,34,14,12,40,14]);
+
+G<x,y>:=MatrixGroup<16,F|x,y>;
+G:=G^(TransformForm(G)*TransformForm(Identity(G),"unitary")^-1);
+
+
+M:=GModule(G);
+K<w>:=BaseRing(M);
+
+A:=ActionGenerator(M,1); B:=ActionGenerator(M,2);
+Order(A), IsScalar(B^4), Order(A*B), Order(A*B*A*B^2); 
+  //2, true, 11, 11 - so these are standard generators from [111].
+
+
+DM := GModule(G, [Transpose(A^-1),Transpose(B^-1)] ); //dual of M
+
+// Construct images of the outer automorphism
+imA:=A;
+imB:= B * A * B * A * B^-1 * A * B^-1 * A * B * A * B^-1 * A * B * A * B^-1 * A *
+B^-2 * A * B^-1 * A * B^-1 * A * B * A * B * A * B^-1 * A * B^-1 * A * B * A *
+B^-1 * A * B * A * B^-1 * A * B^-2 * A * B^-1 * A^2 * B * A * B^-1 * A * B^-1 *
+A * B * A * B^-1 * A * B * A * B^-1 * A * B^-2 * A * B^-1 * A^2 * B * A * B^-1 *
+A * B^-1 * A * B * A * B^-1 * A * B * A * B^-1 * A * B^-2 * A * B^-1 * A * B^-1
+* A * B * A * B * A * B^-1 * A * B^-1 * A * B * A * B^-1 * A * B * A * B^-1 * A
+* B^-2 * A * B^-1 * A * B^2 * A * B^2 * A * B * A * B * A * B * A * B^-1 * A *
+B^-1 * A * B * A * B^-1 * A * B * A * B^-1 * A * B^-2 * A * B^-1 * A * B^-1 * A
+* B * A * B * A * B^-1 * A * B^-1 * A * B * A * B^-1 * A * B * A * B^-1 * A *
+B^-2 * A * B^-1 * A^2 * B * A * B^-1 * A * B^-1 * A * B * A * B^-1 * A * B * A *
+B^-1 * A * B^-2 * A * B^-1 * A^2 * B * A * B^-1 * A * B^-1 * A * B * A * B^-1 *
+A * B * A * B^-1 * A * B^-2 * A * B^-1 * A * B^-1 * A * B^2;
+
+
+// Check these images give standard generators
+Order(imA), IsScalar(imB^4), Order(imA*imB), Order(imA*imB*imA*imB^2); 
+  //2, true, 11, 11 - so these are standard generators from the online Atlas.
+
+AM := GModule(G, [imA,imB] ); //2 aut
+
+
+// Module for gamma
+Mgamma := GModule(G, [Transpose(A^-1),Transpose(B^-1)] ); //dual of M
+
+dh1 := GHom(AM,Mgamma); 
+assert Dimension(dh1) eq 1; // Confirms that AM and DM are isomorphic
+L:=dh1.1;
+isit,kappa:=IsSquare(Determinant(L));
+assert isit eq true;
+
+Lbar:=MatrixAlgebra(GF(49),16)![l^7 : l in Eltseq(L)];
+assert IsDiagonal(L*Transpose(Lbar));
+lambda:=(L*Transpose(Lbar))[1][1];
+
+// Determine whether class is stabilised by gamma or gamma delta
+// G preserves the standard form, so B is the identity and has determinant 1
+
+lambda^-8 * kappa^8;
+// 1, so class is stabilised by a conjugate of gamma
+

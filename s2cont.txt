@@ -1,0 +1,39 @@
+// Note: this computation uses functions from the file 'spininduct'.
+
+
+X,Xm:=spininductcirc(4,2:func:=false);
+G:=sub<GL(16,2) | X cat Xm>;
+LMGChiefFactors(G);
+/*
+    G
+    |  C(4, 2)                    = S(8, 2)
+    1
+*/
+
+
+// Construct the C3-subgroup of G
+M:=MaximalSubgroups(G);
+
+H:=M[2]`subgroup; 
+ChiefFactors(H); //Sp(4,4).2
+/*
+    G
+    |  Cyclic(2)
+    *
+    |  C(2, 4)                    = S(4, 4)
+    1
+*/
+// This is the C3 subgroup of Sp(8,2)
+
+IsAbsolutelyIrreducible(H); //true
+
+DH:=DerivedGroup(H); 
+ChiefFactors(DH); //Sp(4,4)
+/*
+    G
+    |  C(4, 2)                    = S(8, 2)
+    1
+*/
+
+IsAbsolutelyIrreducible(DH); //true
+

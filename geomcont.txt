@@ -1,0 +1,87 @@
+// Induction of Sp(4,2) = Sym(6)
+
+G:=Sym(6);
+H:=sub<Sym(6)|G!(1,2,3),G!(1,2)(3,4,5,6)>;
+
+I:=AbsolutelyIrreducibleModules(H,GF(2));
+
+assert Dimension(I[4]) eq 8;
+M:=Induction(I[4],G);
+
+Constituents(M);
+/*
+[
+    GModule M of dimension 16 over GF(2^2)
+]
+[ 1 ]
+*/
+
+// Hence the 16-dimensional character of Sym(6) is induced from the 8-dimensional character of Alt(6).
+
+
+
+// Ruling out containment of 2.A_8 < 2^{1+8}.SOMinus(8,2)
+
+// Compute traces of elements of order 5 in 2^{1+8}.SOMinus(8,2)
+M:=ClassicalMaximals("S",16,7:classes:={6},all:=false);
+assert #M eq 1;
+C:=M[1];
+
+cl := LMGConjugacyClasses(C); // This computation might take a few seconds
+
+{Trace(cl[i][3]) : i in [1..#cl] | cl[i][1] eq 5}; // Traces of elements of order 5 in the geometric-type subgroup
+// {3};
+
+
+// Ruling out containment of Sp(4,3) < 2^{1+8}.OmegaMinus(8,2)
+
+// Traces of elements of order 5 in the geometric-type subgroup
+M:=ClassicalMaximals("S",16,3:classes:={6},all:=false);
+assert #M eq 1;
+C:=M[1];
+
+cl := LMGConjugacyClasses(C); // This computation might take a few seconds
+
+{Trace(cl[i][3]) : i in [1..#cl] | cl[i][1] eq 5}; // Traces of elements of order 5 in the geometric-type subgroup
+// {2};
+
+// Traces of elements of order 5 in the S2-type subgroup
+
+G:=Sp(4,3);
+V:=GModule(G);
+W:=Constituents(TensorPower(V,3))[2];
+assert Dimension(W) eq 16; // Hence W is the module for the 16-dimensional irreducible S2-type candidate.
+
+S:=ActionGroup(W);
+clS:=LMGConjugacyClasses(S);
+{Trace(clS[i][3]) : i in [1..#clS] | clS[i][1] eq 5}; // Traces of elements of order 5 in the S2-type subgroup
+// {1}
+
+
+
+
+
+
+// 17-dimensional representations of L_2(16) are induced characters.
+
+G:=PSL(2,16);
+H:=[s`subgroup: s in Subgroups(G) | s`order eq #G/17][1];
+
+C:=CharacterTable(G);
+CH:=CharacterTable(H);
+
+for i in [11..17] do;
+	c:=C[i]; assert c[1] eq 17; // Hence c is 17-dimensional
+	print i,#{t: t in [1..#CH] | Induction(CH[t],G) eq c};
+end for;
+/*
+11 2
+12 2
+13 2
+14 2
+15 2
+16 2
+17 2
+*/
+// Hence each 17-dimensional character of G is induced from two characters of H.
+

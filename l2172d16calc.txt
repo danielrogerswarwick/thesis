@@ -1,0 +1,84 @@
+// G=L2(17)_2 in dimension 16, characteristic not 3 or 17
+
+G2 := QuasisimpleMatrixGroup("L217",16,0 : RepNo:=2, Automorphisms:=true);
+
+K<w>:=BaseRing(G2);
+
+G := sub<Generic(G2) | G2.1, G2.2>;
+ChiefFactors(G);
+
+/*
+    G
+    |  A(1, 17)                   = L(2, 17)
+    1
+*/
+
+// Construct the form
+V := GModule(G);
+hh := GHom(V,Dual(V));
+assert Dimension(hh) eq 1;
+form := hh.1;
+
+IsSquare(Determinant(form)*17);
+// true, hence the type of form depends on p mod 17.
+
+// Rescale G2.3 to preserve the form;
+M := MatrixAlgebra(K,16);
+
+assert IsScalar(G2.3*form*Transpose(G2.3)*form^-1); // Hence G2.3 preserves the form up to a scalar
+isit,scal := IsSquare((G2.3*form*Transpose(G2.3)*form^-1)[1][1]);
+assert isit; // Hence G2.3 can be rescaled to preserve the form
+
+g:= (M!G2.3)*scal^-1;
+
+G2 := sub<Generic(G2) | G2.1, G2.2, g>;
+
+// Check no bad primes
+
+LCM({ Denominator(x) : x in Eltseq(G2.1) }); // 1
+LCM({ Denominator(x) : x in Eltseq(G2.2) }); // 1
+LCM({ Denominator(x) : x in Eltseq(G2.3) }); // 1
+LCM({ Denominator(x) : x in Eltseq(G2.1^-1) }); // 1
+LCM({ Denominator(x) : x in Eltseq(G2.2^-1) }); // 1
+LCM({ Denominator(x) : x in Eltseq(G2.3^-1) }); // 1
+LCM({ Denominator(x) : x in Eltseq(form) }); // 24
+// Hence we need separate computations for when p=2
+
+ChiefFactors(G2);
+/*
+    G
+    |  Cyclic(2)
+    *
+    |  A(1, 17)                   = L(2, 17)
+    1
+*/
+
+[G2.i * form * Transpose(G2.i) eq form : i in [1..3]];
+// [true, true, true];
+
+[ Determinant(G2.i) : i in [1..3]];
+// [1, 1, -1]; hence G.2 < GO/SO
+
+
+
+// p=2
+G2p2:=QuasisimpleMatrixGroup("L217",16,2:RepNo:=2,Automorphisms:=true);
+
+LMGChiefFactors(G2p2);
+/*
+    G
+    |  Cyclic(2)
+    *
+    |  A(1, 17)                   = L(2, 17)
+    1
+*/
+
+isit,form,type:=SymmetricBilinearForm(G2p2);
+assert isit;
+type;
+// orthogonalplus
+
+[SpinorNorm(G2p2.i,form) : i in [1..3]];
+// [0,0,1]
+// Hence G.2 is again induced by gamma
+

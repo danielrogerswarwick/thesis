@@ -1,0 +1,47 @@
+//M12 
+G := QuasisimpleMatrixGroup("M12",16,0);
+_,Gis:=IsomorphicCopy(G);
+ChiefFactors(Gis);
+/*
+    G
+    |  M12
+    1
+*/
+
+M:=GModule(G);
+K<w>:=BaseRing(M);
+MinimalPolynomial(w); // $.1^2 - $.1 + 3
+A:=ActionGenerator(M,1); B:=ActionGenerator(M,2);
+Order(A),Order(B),Order(A*B); 
+  //2,3,11 - so these are standard generators from [111].
+
+//check no bad primes in the matrices
+LCM({ Denominator(x) : x in Eltseq(A) }); //1
+LCM({ Denominator(x) : x in Eltseq(B) }); //1 
+// No bad primes
+
+DM := GModule(G, [Transpose(A^-1),Transpose(B^-1)] ); //dual of M
+
+// Construct images of the outer automorphism
+imA:=A;
+imB:= B * A * B^-1 * A * B * A * B^-1 * A * B * A * B^-1 * A * B^2 * A^2 * B * A *
+B^-1 * A * B * A * B^-1 * A * B * A * B * A * B^-1 * A * B * A * B^-1 * A * B *
+A^2 * B^-1 * A * B * A * B^-1 * A * B * A * B^-1 * A * B^2 * A^2 * B * A * B^-1
+* A * B * A * B^-1 * A * B * A * B * A * B^-1 * A * B * A * B^-1 * A * B * A *
+B^-2 * A * B * A * B^-1 * A * B * A * B^-1 * A * B^2 * A * B^-1 * A * B^-1 * A *
+B * A * B^-1 * A * B * A * B^-1 * A * B^2 * A * B^-2 * A * B * A * B^-1 * A * B
+* A * B^-1 * A * B * A * B * A * B * A * B^2 * A * B * A * B * A;
+
+
+// Check these images give standard generators
+Order(imA),Order(imB),Order(imA*imB);
+// 2,3,11
+
+AM := GModule(G, [imA,imB] ); //2 aut
+
+
+dh := GHom(DM,AM); 
+assert Dimension(dh) eq 1; // Confirms that AM and DM are isomorphic
+dd:=Determinant(dh.1);
+IsSquare(dd/-3); //true;
+

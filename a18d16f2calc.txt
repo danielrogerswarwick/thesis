@@ -1,0 +1,9 @@
+G:=sub<Sym(18)|Sym(18)!(1,2),Alt(18)>;
+M:=GModule(G,GF(2));
+L:=Constituents(M)[2];
+Dimension(L); //16
+
+G:=ActionGroup(L);
+isit,form:=SymplecticForm(G);
+
+isit; //true

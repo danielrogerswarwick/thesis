@@ -1,0 +1,113 @@
+// Import G=A_10 in characteristic 2 from ATLAS
+
+F:=GF(2);
+
+a:=CambridgeMatrix(1,F,16,[
+"0100000000000000",
+"1100000000000000",
+"0001000000000000",
+"0011000000000000",
+"0000010000000000",
+"0000110000000000",
+"0000000100000000",
+"0000001100000000",
+"0000000001000000",
+"0000000011000000",
+"0000000000010000",
+"0000000000110000",
+"0000000000000100",
+"0000000000001100",
+"0000000000000001",
+"0000000000000011"]);
+
+b:=CambridgeMatrix(1,F,16,[
+"0010000000000000",
+"0000100000000000",
+"1010000000000000",
+"0000001000000000",
+"0000000001110000",
+"0000000000010000",
+"0000000000001001",
+"0000000000000010",
+"0000000001000000",
+"0000000010010000",
+"0101000100000000",
+"1010000100000000",
+"0011110000001001",
+"0000010000000010",
+"1010010011000110",
+"0011101000101000"]);
+
+G<a,b>:=MatrixGroup<16,F|a,b>;
+
+ChiefFactors(G);
+/*
+    G
+    |  Alternating(10)
+    1
+*/
+M := GModule(G);
+
+Order(a), Order(b), Order(a*b), Order(a*b*b);
+// 3, 9, 8, 12, so standard generators.
+
+isit,form,type := SymmetricBilinearForm(G);
+
+Aa:=a;
+Ba:=b^2 * a^-1 * b^-3 * a^-1 * b^4 * a^-2 * b^2 * a^-1 * b^-3 * a^-2 * b^-6 * a *
+b^3 * a * b^-2 * a^2 * b^3 * a * b^-2 * a^2 * b^3 * a * b^-2 * a^2 * b^3 * a *
+b^-2 * a^2 * b^3 * a * b^-2 * a^2 * b^3 * a * b^3 * a * b^-2 * a * b^-1 * a^-2 *
+b^2 * a^-1 * b^-3 * a^-2 * b^2 * a^-1 * b^-3 * a^-1 * b^3 * a^-1 * b^2 * a^-1 *
+b^-3 * a^-2 * b^2 * a^-1 * b^-3 * a^-2 * b^2 * a^-1 * b^-3 * a^-1 * b^2 * a^-1 *
+b^-3 * a * b^3 * a * b^-2 * a^2 * b^3 * a * b^-2 * a^2 * b^3 * a * b^-2 * a^2 *
+b^3 * a * b^-2 * a * b^-3 * a^-1 * b^2 * a^-1 * b^-3 * a^-1 * b^3 * a^-1 * b^2 *
+a^-1 * b^-3 * a^-2 * b^2 * a^-1 * b^-3 * a^-1 * b^3 * a^-1 * b^2 * a^-1 * b^-3 *
+a^-1 * b^4 * a * b * a^2 * b * a^2;
+
+Order(Aa), Order(Ba), IsScalar((Aa*Ba)^8), IsScalar((Aa*Ba*Ba)^12);
+// 3, 9, true, true, so standard generators.
+
+
+aM:=GModule(G,[Aa,Ba]); // 2 automorphism
+h:=GHom(M,aM);
+c:=MatrixAlgebra(F,16)!(h.1);
+
+G2:=sub<Generic(G)|a,b,c>;
+
+ChiefFactors(G2);
+/*
+    G
+    |  Cyclic(2)
+    *
+    |  Alternating(10)
+    1
+*/
+
+// Group is Sym(10);
+
+isit,form,type:=SymmetricBilinearForm(G2);
+assert isit eq true;
+type; // orthogonalplus
+// Hence G.2 < SO+;
+
+c:=G2.3;
+SpinorNorm(c,form); // 
+// 0, hence G.2 < Omega+
+
+
+
+// Testing containment in the spin group
+
+S:=SpinPlus(10,2);
+V:=GModule(S);
+V2:=Constituents(V)[2]; assert Dimension(V2) eq 16;
+Omega:=ActionGroup(V2);
+
+SS:=Subgroups(Omega : OrderEqual := #Sym(10));
+assert #SS eq 1;
+A:=SS[1]`subgroup;
+assert IsIsomorphic(A,Sym(10));
+
+IsIrreducible(GModule(A));
+// true 
+// Hence we have a containment of A in the spin representation.

@@ -1,0 +1,66 @@
+G2:=QuasisimpleMatrixGroup("L216",17,0:RepNo:=1,Automorphisms:=true);
+G:=sub<Generic(G2) | G2.1,G2.2>;
+
+Determinant(G2.3); // -1
+// Hence we rescale G2.3 to have determinant 1;
+
+G2 := sub<Generic(G2) | G2.1,G2.2,-G2.3>;
+
+V:=GModule(G);
+form:=GHom(V,Dual(V)).1;
+
+
+// Checks:
+#G; // 4080
+ChiefFactors(G);
+/*
+    G
+    |  A(1, 16)                   = L(2, 16)
+    1
+*/
+#G2; // 16320
+ChiefFactors(G2);
+/*
+    G
+    |  Cyclic(2)
+    *
+    |  Cyclic(2)
+    *
+    |  A(1, 16)                   = L(2, 16)
+    1
+*/
+
+// This is G.4
+
+for i in [1..#Generators(G2)] do;
+	assert (G2.i)*form*Transpose(G2.i) eq form;
+	assert Determinant(G2.i) eq 1;
+end for;
+
+// Check no bad primes in the generators or the form
+LCM({ Denominator(x) : x in Eltseq(G2.1) }); // 1
+LCM({ Denominator(x) : x in Eltseq(G2.2) }); // 1
+LCM({ Denominator(x) : x in Eltseq(G2.3) }); // 1
+LCM({ Denominator(x) : x in Eltseq(form) }); // 3
+
+L:=G2.3;
+
+M:=MatrixAlgebra(Rationals(),17);
+A:=Identity(M)-M!L;
+N:=Nullspace(A);
+dim:=Dimension(N); dim; //5
+basis:=ExtendBasis(N,Generic(N))[dim+1..17];
+l:=Eltseq(basis[1]);
+for i in [2..#basis] do;
+	l:= l cat Eltseq(basis[i]);
+end for;
+B:=Matrix(Rationals(),17-dim,17,l);
+
+// Now, using spinor norm calculations, we are interested in 
+// when the determinant of 
+// B*A*form*Transpose(B) is a square
+
+tt:=B*A*form*Transpose(B);
+Determinant(tt); // 512/531441
+IsSquare(Determinant(tt)*2); //true 32/729
+
