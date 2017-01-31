@@ -43,7 +43,8 @@ form := 6*form;
 d:= Determinant(form);
 Factorisation(IntegerRing()!d);
 // [ <5,8> ]
-// Thus, no bad primes
+// Thus, no bad primes.
+// Also, determinant is a square, so the form is of plus type.
 
 // L induces the nontrivial outer automorphism of 2.A_10
 L:=G2.3;
@@ -94,8 +95,8 @@ IsSquare(Determinant(tt)); //true 1
 // We perform a separate calculation for the case p=3.
 
 Gp3 := QuasisimpleMatrixGroup("2A10",16,3:Automorphisms:=true);
-isit,formp3,_,scal:=SymmetricBilinearForm(Gp3:Scalars:=true);
-assert isit;
+isit,formp3,type,scal:=SymmetricBilinearForm(Gp3:Scalars:=true);
+assert isit and type eq "orthogonalplus";
 scal; //[1,1,2]
 
 IsSquare(scal[3]); // false

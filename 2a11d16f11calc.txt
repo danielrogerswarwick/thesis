@@ -1,5 +1,5 @@
 // Import 2.A_11.2 from the online ATLAS
-
+// http://brauer.maths.qmul.ac.uk/Atlas/v3/alt/A11/
 F:=GF(11);
 
 x:=CambridgeMatrix(3,F,16,\[

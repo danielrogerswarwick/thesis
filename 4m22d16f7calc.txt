@@ -1,5 +1,6 @@
 //4.M22
 // Import 4.M22 in characteristic 7 from the ATLAS
+// http://brauer.maths.qmul.ac.uk/Atlas/v3/spor/M22/
 
 F<w>:=GF(49);
 

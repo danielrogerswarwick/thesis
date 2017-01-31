@@ -31,7 +31,7 @@ DH:=DerivedGroup(H);
 ChiefFactors(DH); //Sp(4,4)
 /*
     G
-    |  C(4, 2)                    = S(8, 2)
+    |  C(2, 4)                    = S(4, 4)
     1
 */
 

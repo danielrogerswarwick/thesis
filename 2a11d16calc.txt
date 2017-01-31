@@ -42,8 +42,8 @@ AM := GModule(G, [imA,imB] ); //2 aut
 
 dh := GHom(DM,AM); 
 assert Dimension(dh) eq 1; // Confirms that AM and DM are isomorphic
-dd:=Determinant(dh.1);
-IsSquare(dd); //true;
+L:=Determinant(dh.1);
+IsSquare(L); //true;
 
 // Find the form preserved in the unitary case
 
